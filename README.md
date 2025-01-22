@@ -1,4 +1,4 @@
-# Gebtrificació a Barcelona
+# Gentrificació a Barcelona
 Aquest repositori github disposa de les dades i el codi elaborat per poder dur a terme l'estudi de diverses variables que poden tenir afectació en el procés de gentrificació. Les dades utilitzades estan relacionades amb la ciutat de Barcelona.
 
 ## Material disponible
