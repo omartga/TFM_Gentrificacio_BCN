@@ -1,0 +1,761 @@
+territori,tipus_de_territori,anys,habitatges_us_turistic
+barcelona,municipi,2014,9606
+barcelona,municipi,2015,9606
+barcelona,municipi,2016,9606
+barcelona,municipi,2017,9606
+barcelona,municipi,2018,9581
+barcelona,municipi,2019,9547
+barcelona,municipi,2020,9530
+barcelona,municipi,2021,9391
+barcelona,municipi,2022,9402
+barcelona,municipi,2023,9818
+ciutat vella,districte,2014,604
+ciutat vella,districte,2015,604
+ciutat vella,districte,2016,602
+ciutat vella,districte,2017,602
+ciutat vella,districte,2018,607
+ciutat vella,districte,2019,607
+ciutat vella,districte,2020,607
+ciutat vella,districte,2021,605
+ciutat vella,districte,2022,616
+ciutat vella,districte,2023,648
+el raval,barri,2014,180
+el raval,barri,2015,180
+el raval,barri,2016,177
+el raval,barri,2017,177
+el raval,barri,2018,179
+el raval,barri,2019,191
+el raval,barri,2020,191
+el raval,barri,2021,189
+el raval,barri,2022,199
+el raval,barri,2023,212
+el barri gotic,barri,2014,184
+el barri gotic,barri,2015,184
+el barri gotic,barri,2016,188
+el barri gotic,barri,2017,188
+el barri gotic,barri,2018,194
+el barri gotic,barri,2019,192
+el barri gotic,barri,2020,193
+el barri gotic,barri,2021,193
+el barri gotic,barri,2022,194
+el barri gotic,barri,2023,201
+la barceloneta,barri,2014,69
+la barceloneta,barri,2015,69
+la barceloneta,barri,2016,68
+la barceloneta,barri,2017,68
+la barceloneta,barri,2018,66
+la barceloneta,barri,2019,65
+la barceloneta,barri,2020,64
+la barceloneta,barri,2021,64
+la barceloneta,barri,2022,64
+la barceloneta,barri,2023,64
+"sant pere, santa caterina i la ribera",barri,2014,171
+"sant pere, santa caterina i la ribera",barri,2015,171
+"sant pere, santa caterina i la ribera",barri,2016,169
+"sant pere, santa caterina i la ribera",barri,2017,169
+"sant pere, santa caterina i la ribera",barri,2018,168
+"sant pere, santa caterina i la ribera",barri,2019,159
+"sant pere, santa caterina i la ribera",barri,2020,159
+"sant pere, santa caterina i la ribera",barri,2021,159
+"sant pere, santa caterina i la ribera",barri,2022,159
+"sant pere, santa caterina i la ribera",barri,2023,171
+eixample,districte,2014,4607
+eixample,districte,2015,4607
+eixample,districte,2016,4473
+eixample,districte,2017,4473
+eixample,districte,2018,4471
+eixample,districte,2019,4467
+eixample,districte,2020,4467
+eixample,districte,2021,4403
+eixample,districte,2022,4453
+eixample,districte,2023,4467
+el fort pienc,barri,2014,343
+el fort pienc,barri,2015,343
+el fort pienc,barri,2016,331
+el fort pienc,barri,2017,331
+el fort pienc,barri,2018,331
+el fort pienc,barri,2019,332
+el fort pienc,barri,2020,332
+el fort pienc,barri,2021,330
+el fort pienc,barri,2022,328
+el fort pienc,barri,2023,333
+la sagrada familia,barri,2014,794
+la sagrada familia,barri,2015,794
+la sagrada familia,barri,2016,772
+la sagrada familia,barri,2017,772
+la sagrada familia,barri,2018,768
+la sagrada familia,barri,2019,768
+la sagrada familia,barri,2020,765
+la sagrada familia,barri,2021,755
+la sagrada familia,barri,2022,750
+la sagrada familia,barri,2023,750
+la dreta de l'eixample,barri,2014,1747
+la dreta de l'eixample,barri,2015,1747
+la dreta de l'eixample,barri,2016,1653
+la dreta de l'eixample,barri,2017,1653
+la dreta de l'eixample,barri,2018,1664
+la dreta de l'eixample,barri,2019,1660
+la dreta de l'eixample,barri,2020,1662
+la dreta de l'eixample,barri,2021,1650
+la dreta de l'eixample,barri,2022,1631
+la dreta de l'eixample,barri,2023,1655
+l'antiga esquerra de l'eixample,barri,2014,727
+l'antiga esquerra de l'eixample,barri,2015,727
+l'antiga esquerra de l'eixample,barri,2016,709
+l'antiga esquerra de l'eixample,barri,2017,709
+l'antiga esquerra de l'eixample,barri,2018,708
+l'antiga esquerra de l'eixample,barri,2019,710
+l'antiga esquerra de l'eixample,barri,2020,709
+l'antiga esquerra de l'eixample,barri,2021,688
+l'antiga esquerra de l'eixample,barri,2022,670
+l'antiga esquerra de l'eixample,barri,2023,678
+la nova esquerra de l'eixample,barri,2014,428
+la nova esquerra de l'eixample,barri,2015,428
+la nova esquerra de l'eixample,barri,2016,418
+la nova esquerra de l'eixample,barri,2017,418
+la nova esquerra de l'eixample,barri,2018,413
+la nova esquerra de l'eixample,barri,2019,413
+la nova esquerra de l'eixample,barri,2020,413
+la nova esquerra de l'eixample,barri,2021,404
+la nova esquerra de l'eixample,barri,2022,520
+la nova esquerra de l'eixample,barri,2023,484
+sant antoni,barri,2014,568
+sant antoni,barri,2015,568
+sant antoni,barri,2016,590
+sant antoni,barri,2017,590
+sant antoni,barri,2018,587
+sant antoni,barri,2019,584
+sant antoni,barri,2020,586
+sant antoni,barri,2021,576
+sant antoni,barri,2022,554
+sant antoni,barri,2023,567
+sants-montjuic,districte,2014,1137
+sants-montjuic,districte,2015,1137
+sants-montjuic,districte,2016,1164
+sants-montjuic,districte,2017,1164
+sants-montjuic,districte,2018,1174
+sants-montjuic,districte,2019,1169
+sants-montjuic,districte,2020,1169
+sants-montjuic,districte,2021,1141
+sants-montjuic,districte,2022,1113
+sants-montjuic,districte,2023,1195
+el poble-sec,barri,2014,546
+el poble-sec,barri,2015,546
+el poble-sec,barri,2016,518
+el poble-sec,barri,2017,518
+el poble-sec,barri,2018,519
+el poble-sec,barri,2019,519
+el poble-sec,barri,2020,515
+el poble-sec,barri,2021,498
+el poble-sec,barri,2022,487
+el poble-sec,barri,2023,513
+la marina del prat vermell,barri,2014,3
+la marina del prat vermell,barri,2015,3
+la marina del prat vermell,barri,2016,3
+la marina del prat vermell,barri,2017,3
+la marina del prat vermell,barri,2018,3
+la marina del prat vermell,barri,2019,3
+la marina del prat vermell,barri,2020,3
+la marina del prat vermell,barri,2021,3
+la marina del prat vermell,barri,2022,3
+la marina del prat vermell,barri,2023,3
+la marina de port,barri,2014,6
+la marina de port,barri,2015,6
+la marina de port,barri,2016,7
+la marina de port,barri,2017,7
+la marina de port,barri,2018,7
+la marina de port,barri,2019,7
+la marina de port,barri,2020,6
+la marina de port,barri,2021,6
+la marina de port,barri,2022,6
+la marina de port,barri,2023,6
+la font de la guatlla,barri,2014,74
+la font de la guatlla,barri,2015,74
+la font de la guatlla,barri,2016,73
+la font de la guatlla,barri,2017,73
+la font de la guatlla,barri,2018,73
+la font de la guatlla,barri,2019,73
+la font de la guatlla,barri,2020,73
+la font de la guatlla,barri,2021,73
+la font de la guatlla,barri,2022,73
+la font de la guatlla,barri,2023,131
+hostafrancs,barri,2014,187
+hostafrancs,barri,2015,187
+hostafrancs,barri,2016,168
+hostafrancs,barri,2017,168
+hostafrancs,barri,2018,177
+hostafrancs,barri,2019,172
+hostafrancs,barri,2020,177
+hostafrancs,barri,2021,175
+hostafrancs,barri,2022,174
+hostafrancs,barri,2023,177
+la bordeta,barri,2014,42
+la bordeta,barri,2015,42
+la bordeta,barri,2016,44
+la bordeta,barri,2017,44
+la bordeta,barri,2018,44
+la bordeta,barri,2019,44
+la bordeta,barri,2020,44
+la bordeta,barri,2021,39
+la bordeta,barri,2022,30
+la bordeta,barri,2023,30
+sants-badal,barri,2014,90
+sants-badal,barri,2015,90
+sants-badal,barri,2016,106
+sants-badal,barri,2017,106
+sants-badal,barri,2018,106
+sants-badal,barri,2019,106
+sants-badal,barri,2020,106
+sants-badal,barri,2021,103
+sants-badal,barri,2022,97
+sants-badal,barri,2023,97
+sants,barri,2014,189
+sants,barri,2015,189
+sants,barri,2016,245
+sants,barri,2017,245
+sants,barri,2018,245
+sants,barri,2019,245
+sants,barri,2020,245
+sants,barri,2021,244
+sants,barri,2022,243
+sants,barri,2023,238
+les corts,districte,2014,215
+les corts,districte,2015,215
+les corts,districte,2016,267
+les corts,districte,2017,267
+les corts,districte,2018,266
+les corts,districte,2019,265
+les corts,districte,2020,261
+les corts,districte,2021,257
+les corts,districte,2022,256
+les corts,districte,2023,270
+les corts,barri,2014,171
+les corts,barri,2015,171
+les corts,barri,2016,210
+les corts,barri,2017,210
+les corts,barri,2018,209
+les corts,barri,2019,208
+les corts,barri,2020,206
+les corts,barri,2021,202
+les corts,barri,2022,201
+les corts,barri,2023,211
+la maternitat i sant ramon,barri,2014,36
+la maternitat i sant ramon,barri,2015,36
+la maternitat i sant ramon,barri,2016,46
+la maternitat i sant ramon,barri,2017,46
+la maternitat i sant ramon,barri,2018,46
+la maternitat i sant ramon,barri,2019,46
+la maternitat i sant ramon,barri,2020,44
+la maternitat i sant ramon,barri,2021,44
+la maternitat i sant ramon,barri,2022,44
+la maternitat i sant ramon,barri,2023,48
+pedralbes,barri,2014,8
+pedralbes,barri,2015,8
+pedralbes,barri,2016,11
+pedralbes,barri,2017,11
+pedralbes,barri,2018,11
+pedralbes,barri,2019,11
+pedralbes,barri,2020,11
+pedralbes,barri,2021,11
+pedralbes,barri,2022,11
+pedralbes,barri,2023,11
+sarria-sant gervasi,districte,2014,512
+sarria-sant gervasi,districte,2015,512
+sarria-sant gervasi,districte,2016,506
+sarria-sant gervasi,districte,2017,506
+sarria-sant gervasi,districte,2018,497
+sarria-sant gervasi,districte,2019,485
+sarria-sant gervasi,districte,2020,484
+sarria-sant gervasi,districte,2021,491
+sarria-sant gervasi,districte,2022,491
+sarria-sant gervasi,districte,2023,621
+"vallvidrera, el tibidabo i les planes",barri,2014,3
+"vallvidrera, el tibidabo i les planes",barri,2015,3
+"vallvidrera, el tibidabo i les planes",barri,2016,3
+"vallvidrera, el tibidabo i les planes",barri,2017,3
+"vallvidrera, el tibidabo i les planes",barri,2018,3
+"vallvidrera, el tibidabo i les planes",barri,2019,3
+"vallvidrera, el tibidabo i les planes",barri,2020,3
+"vallvidrera, el tibidabo i les planes",barri,2021,3
+"vallvidrera, el tibidabo i les planes",barri,2022,3
+"vallvidrera, el tibidabo i les planes",barri,2023,3
+sarria,barri,2014,23
+sarria,barri,2015,23
+sarria,barri,2016,27
+sarria,barri,2017,27
+sarria,barri,2018,27
+sarria,barri,2019,27
+sarria,barri,2020,27
+sarria,barri,2021,26
+sarria,barri,2022,26
+sarria,barri,2023,27
+les tres torres,barri,2014,31
+les tres torres,barri,2015,31
+les tres torres,barri,2016,35
+les tres torres,barri,2017,35
+les tres torres,barri,2018,35
+les tres torres,barri,2019,35
+les tres torres,barri,2020,35
+les tres torres,barri,2021,34
+les tres torres,barri,2022,33
+les tres torres,barri,2023,34
+sant gervasi-la bonanova,barri,2014,26
+sant gervasi-la bonanova,barri,2015,26
+sant gervasi-la bonanova,barri,2016,33
+sant gervasi-la bonanova,barri,2017,33
+sant gervasi-la bonanova,barri,2018,32
+sant gervasi-la bonanova,barri,2019,32
+sant gervasi-la bonanova,barri,2020,32
+sant gervasi-la bonanova,barri,2021,32
+sant gervasi-la bonanova,barri,2022,36
+sant gervasi-la bonanova,barri,2023,68
+sant gervasi-galvany,barri,2014,271
+sant gervasi-galvany,barri,2015,271
+sant gervasi-galvany,barri,2016,254
+sant gervasi-galvany,barri,2017,254
+sant gervasi-galvany,barri,2018,244
+sant gervasi-galvany,barri,2019,244
+sant gervasi-galvany,barri,2020,244
+sant gervasi-galvany,barri,2021,242
+sant gervasi-galvany,barri,2022,239
+sant gervasi-galvany,barri,2023,291
+el putxet i el farro,barri,2014,158
+el putxet i el farro,barri,2015,158
+el putxet i el farro,barri,2016,154
+el putxet i el farro,barri,2017,154
+el putxet i el farro,barri,2018,156
+el putxet i el farro,barri,2019,144
+el putxet i el farro,barri,2020,143
+el putxet i el farro,barri,2021,154
+el putxet i el farro,barri,2022,154
+el putxet i el farro,barri,2023,198
+gracia,districte,2014,1081
+gracia,districte,2015,1081
+gracia,districte,2016,1081
+gracia,districte,2017,1081
+gracia,districte,2018,1077
+gracia,districte,2019,1071
+gracia,districte,2020,1069
+gracia,districte,2021,1051
+gracia,districte,2022,1040
+gracia,districte,2023,1081
+vallcarca i els penitents,barri,2014,35
+vallcarca i els penitents,barri,2015,35
+vallcarca i els penitents,barri,2016,40
+vallcarca i els penitents,barri,2017,40
+vallcarca i els penitents,barri,2018,40
+vallcarca i els penitents,barri,2019,40
+vallcarca i els penitents,barri,2020,40
+vallcarca i els penitents,barri,2021,40
+vallcarca i els penitents,barri,2022,39
+vallcarca i els penitents,barri,2023,39
+el coll,barri,2014,13
+el coll,barri,2015,13
+el coll,barri,2016,20
+el coll,barri,2017,20
+el coll,barri,2018,20
+el coll,barri,2019,20
+el coll,barri,2020,20
+el coll,barri,2021,20
+el coll,barri,2022,20
+el coll,barri,2023,20
+la salut,barri,2014,35
+la salut,barri,2015,35
+la salut,barri,2016,38
+la salut,barri,2017,38
+la salut,barri,2018,37
+la salut,barri,2019,37
+la salut,barri,2020,37
+la salut,barri,2021,36
+la salut,barri,2022,36
+la salut,barri,2023,37
+la vila de gracia,barri,2014,768
+la vila de gracia,barri,2015,768
+la vila de gracia,barri,2016,754
+la vila de gracia,barri,2017,754
+la vila de gracia,barri,2018,753
+la vila de gracia,barri,2019,750
+la vila de gracia,barri,2020,749
+la vila de gracia,barri,2021,734
+la vila de gracia,barri,2022,725
+la vila de gracia,barri,2023,762
+el camp d'en grassot i gracia nova,barri,2014,230
+el camp d'en grassot i gracia nova,barri,2015,230
+el camp d'en grassot i gracia nova,barri,2016,229
+el camp d'en grassot i gracia nova,barri,2017,229
+el camp d'en grassot i gracia nova,barri,2018,227
+el camp d'en grassot i gracia nova,barri,2019,224
+el camp d'en grassot i gracia nova,barri,2020,223
+el camp d'en grassot i gracia nova,barri,2021,221
+el camp d'en grassot i gracia nova,barri,2022,220
+el camp d'en grassot i gracia nova,barri,2023,223
+horta-guinardo,districte,2014,198
+horta-guinardo,districte,2015,198
+horta-guinardo,districte,2016,259
+horta-guinardo,districte,2017,259
+horta-guinardo,districte,2018,259
+horta-guinardo,districte,2019,244
+horta-guinardo,districte,2020,238
+horta-guinardo,districte,2021,218
+horta-guinardo,districte,2022,215
+horta-guinardo,districte,2023,226
+el baix guinardo,barri,2014,87
+el baix guinardo,barri,2015,87
+el baix guinardo,barri,2016,106
+el baix guinardo,barri,2017,106
+el baix guinardo,barri,2018,106
+el baix guinardo,barri,2019,92
+el baix guinardo,barri,2020,92
+el baix guinardo,barri,2021,76
+el baix guinardo,barri,2022,73
+el baix guinardo,barri,2023,81
+can baro,barri,2014,13
+can baro,barri,2015,13
+can baro,barri,2016,20
+can baro,barri,2017,20
+can baro,barri,2018,20
+can baro,barri,2019,20
+can baro,barri,2020,20
+can baro,barri,2021,20
+can baro,barri,2022,20
+can baro,barri,2023,20
+el guinardo,barri,2014,54
+el guinardo,barri,2015,54
+el guinardo,barri,2016,75
+el guinardo,barri,2017,75
+el guinardo,barri,2018,75
+el guinardo,barri,2019,75
+el guinardo,barri,2020,70
+el guinardo,barri,2021,70
+el guinardo,barri,2022,70
+el guinardo,barri,2023,74
+la font d'en fargues,barri,2014,2
+la font d'en fargues,barri,2015,2
+la font d'en fargues,barri,2016,4
+la font d'en fargues,barri,2017,4
+la font d'en fargues,barri,2018,4
+la font d'en fargues,barri,2019,4
+la font d'en fargues,barri,2020,4
+la font d'en fargues,barri,2021,4
+la font d'en fargues,barri,2022,4
+la font d'en fargues,barri,2023,4
+el carmel,barri,2014,26
+el carmel,barri,2015,26
+el carmel,barri,2016,33
+el carmel,barri,2017,33
+el carmel,barri,2018,33
+el carmel,barri,2019,33
+el carmel,barri,2020,33
+el carmel,barri,2021,31
+el carmel,barri,2022,32
+el carmel,barri,2023,32
+la teixonera,barri,2014,9
+la teixonera,barri,2015,9
+la teixonera,barri,2016,9
+la teixonera,barri,2017,9
+la teixonera,barri,2018,9
+la teixonera,barri,2019,9
+la teixonera,barri,2020,9
+la teixonera,barri,2021,7
+la teixonera,barri,2022,6
+la teixonera,barri,2023,5
+sant genis dels agudells,barri,2014,3
+sant genis dels agudells,barri,2015,3
+sant genis dels agudells,barri,2016,4
+sant genis dels agudells,barri,2017,4
+sant genis dels agudells,barri,2018,4
+sant genis dels agudells,barri,2019,3
+sant genis dels agudells,barri,2020,3
+sant genis dels agudells,barri,2021,3
+sant genis dels agudells,barri,2022,3
+sant genis dels agudells,barri,2023,3
+la vall d'hebron,barri,2014,NA
+la vall d'hebron,barri,2015,NA
+la vall d'hebron,barri,2016,1
+la vall d'hebron,barri,2017,1
+la vall d'hebron,barri,2018,1
+la vall d'hebron,barri,2019,1
+la vall d'hebron,barri,2020,1
+la vall d'hebron,barri,2021,1
+la vall d'hebron,barri,2022,1
+la vall d'hebron,barri,2023,1
+horta,barri,2014,4
+horta,barri,2015,4
+horta,barri,2016,7
+horta,barri,2017,7
+horta,barri,2018,7
+horta,barri,2019,7
+horta,barri,2020,6
+horta,barri,2021,6
+horta,barri,2022,6
+horta,barri,2023,6
+nou barris,districte,2014,19
+nou barris,districte,2015,19
+nou barris,districte,2016,22
+nou barris,districte,2017,22
+nou barris,districte,2018,21
+nou barris,districte,2019,29
+nou barris,districte,2020,29
+nou barris,districte,2021,29
+nou barris,districte,2022,29
+nou barris,districte,2023,40
+vilapicina i la torre llobeta,barri,2014,6
+vilapicina i la torre llobeta,barri,2015,6
+vilapicina i la torre llobeta,barri,2016,9
+vilapicina i la torre llobeta,barri,2017,9
+vilapicina i la torre llobeta,barri,2018,9
+vilapicina i la torre llobeta,barri,2019,9
+vilapicina i la torre llobeta,barri,2020,9
+vilapicina i la torre llobeta,barri,2021,9
+vilapicina i la torre llobeta,barri,2022,9
+vilapicina i la torre llobeta,barri,2023,17
+porta,barri,2014,2
+porta,barri,2015,2
+porta,barri,2016,2
+porta,barri,2017,2
+porta,barri,2018,2
+porta,barri,2019,10
+porta,barri,2020,10
+porta,barri,2021,10
+porta,barri,2022,10
+porta,barri,2023,12
+el turo de la peira,barri,2014,NA
+el turo de la peira,barri,2015,NA
+el turo de la peira,barri,2016,NA
+el turo de la peira,barri,2017,NA
+el turo de la peira,barri,2018,NA
+el turo de la peira,barri,2019,NA
+el turo de la peira,barri,2020,NA
+el turo de la peira,barri,2021,NA
+el turo de la peira,barri,2022,NA
+el turo de la peira,barri,2023,1
+la guineueta,barri,2014,1
+la guineueta,barri,2015,1
+la guineueta,barri,2016,1
+la guineueta,barri,2017,1
+la guineueta,barri,2018,1
+la guineueta,barri,2019,1
+la guineueta,barri,2020,1
+la guineueta,barri,2021,1
+la guineueta,barri,2022,1
+la guineueta,barri,2023,1
+canyelles,barri,2014,1
+canyelles,barri,2015,1
+canyelles,barri,2016,1
+canyelles,barri,2017,1
+canyelles,barri,2018,1
+canyelles,barri,2019,1
+canyelles,barri,2020,1
+canyelles,barri,2021,1
+canyelles,barri,2022,1
+canyelles,barri,2023,1
+les roquetes,barri,2014,3
+les roquetes,barri,2015,3
+les roquetes,barri,2016,2
+les roquetes,barri,2017,2
+les roquetes,barri,2018,2
+les roquetes,barri,2019,2
+les roquetes,barri,2020,2
+les roquetes,barri,2021,2
+les roquetes,barri,2022,2
+les roquetes,barri,2023,2
+verdun,barri,2014,2
+verdun,barri,2015,2
+verdun,barri,2016,3
+verdun,barri,2017,3
+verdun,barri,2018,3
+verdun,barri,2019,3
+verdun,barri,2020,3
+verdun,barri,2021,3
+verdun,barri,2022,3
+verdun,barri,2023,3
+la prosperitat,barri,2014,4
+la prosperitat,barri,2015,4
+la prosperitat,barri,2016,4
+la prosperitat,barri,2017,4
+la prosperitat,barri,2018,3
+la prosperitat,barri,2019,3
+la prosperitat,barri,2020,3
+la prosperitat,barri,2021,3
+la prosperitat,barri,2022,3
+la prosperitat,barri,2023,3
+sant andreu,districte,2014,69
+sant andreu,districte,2015,69
+sant andreu,districte,2016,79
+sant andreu,districte,2017,79
+sant andreu,districte,2018,78
+sant andreu,districte,2019,78
+sant andreu,districte,2020,77
+sant andreu,districte,2021,76
+sant andreu,districte,2022,76
+sant andreu,districte,2023,89
+la trinitat vella,barri,2014,5
+la trinitat vella,barri,2015,5
+la trinitat vella,barri,2016,4
+la trinitat vella,barri,2017,4
+la trinitat vella,barri,2018,4
+la trinitat vella,barri,2019,4
+la trinitat vella,barri,2020,4
+la trinitat vella,barri,2021,4
+la trinitat vella,barri,2022,4
+la trinitat vella,barri,2023,5
+el bon pastor,barri,2014,1
+el bon pastor,barri,2015,1
+el bon pastor,barri,2016,1
+el bon pastor,barri,2017,1
+el bon pastor,barri,2018,1
+el bon pastor,barri,2019,1
+el bon pastor,barri,2020,1
+el bon pastor,barri,2021,1
+el bon pastor,barri,2022,1
+el bon pastor,barri,2023,1
+sant andreu,barri,2014,27
+sant andreu,barri,2015,27
+sant andreu,barri,2016,29
+sant andreu,barri,2017,29
+sant andreu,barri,2018,28
+sant andreu,barri,2019,28
+sant andreu,barri,2020,28
+sant andreu,barri,2021,27
+sant andreu,barri,2022,27
+sant andreu,barri,2023,33
+la sagrera,barri,2014,21
+la sagrera,barri,2015,21
+la sagrera,barri,2016,22
+la sagrera,barri,2017,22
+la sagrera,barri,2018,22
+la sagrera,barri,2019,22
+la sagrera,barri,2020,22
+la sagrera,barri,2021,22
+la sagrera,barri,2022,22
+la sagrera,barri,2023,22
+el congres i els indians,barri,2014,4
+el congres i els indians,barri,2015,4
+el congres i els indians,barri,2016,6
+el congres i els indians,barri,2017,6
+el congres i els indians,barri,2018,6
+el congres i els indians,barri,2019,6
+el congres i els indians,barri,2020,6
+el congres i els indians,barri,2021,6
+el congres i els indians,barri,2022,6
+el congres i els indians,barri,2023,6
+navas,barri,2014,11
+navas,barri,2015,11
+navas,barri,2016,17
+navas,barri,2017,17
+navas,barri,2018,17
+navas,barri,2019,17
+navas,barri,2020,16
+navas,barri,2021,16
+navas,barri,2022,16
+navas,barri,2023,22
+sant marti,districte,2014,1164
+sant marti,districte,2015,1164
+sant marti,districte,2016,1153
+sant marti,districte,2017,1153
+sant marti,districte,2018,1131
+sant marti,districte,2019,1132
+sant marti,districte,2020,1129
+sant marti,districte,2021,1120
+sant marti,districte,2022,1113
+sant marti,districte,2023,1181
+el camp de l'arpa del clot,barri,2014,270
+el camp de l'arpa del clot,barri,2015,270
+el camp de l'arpa del clot,barri,2016,267
+el camp de l'arpa del clot,barri,2017,267
+el camp de l'arpa del clot,barri,2018,265
+el camp de l'arpa del clot,barri,2019,266
+el camp de l'arpa del clot,barri,2020,266
+el camp de l'arpa del clot,barri,2021,266
+el camp de l'arpa del clot,barri,2022,267
+el camp de l'arpa del clot,barri,2023,292
+el clot,barri,2014,50
+el clot,barri,2015,50
+el clot,barri,2016,51
+el clot,barri,2017,51
+el clot,barri,2018,50
+el clot,barri,2019,50
+el clot,barri,2020,50
+el clot,barri,2021,48
+el clot,barri,2022,46
+el clot,barri,2023,49
+el parc i la llacuna del poblenou,barri,2014,101
+el parc i la llacuna del poblenou,barri,2015,101
+el parc i la llacuna del poblenou,barri,2016,103
+el parc i la llacuna del poblenou,barri,2017,103
+el parc i la llacuna del poblenou,barri,2018,101
+el parc i la llacuna del poblenou,barri,2019,101
+el parc i la llacuna del poblenou,barri,2020,98
+el parc i la llacuna del poblenou,barri,2021,98
+el parc i la llacuna del poblenou,barri,2022,98
+el parc i la llacuna del poblenou,barri,2023,100
+la vila olimpica del poblenou,barri,2014,111
+la vila olimpica del poblenou,barri,2015,111
+la vila olimpica del poblenou,barri,2016,111
+la vila olimpica del poblenou,barri,2017,111
+la vila olimpica del poblenou,barri,2018,108
+la vila olimpica del poblenou,barri,2019,108
+la vila olimpica del poblenou,barri,2020,108
+la vila olimpica del poblenou,barri,2021,107
+la vila olimpica del poblenou,barri,2022,105
+la vila olimpica del poblenou,barri,2023,105
+el poblenou,barri,2014,406
+el poblenou,barri,2015,406
+el poblenou,barri,2016,395
+el poblenou,barri,2017,395
+el poblenou,barri,2018,389
+el poblenou,barri,2019,389
+el poblenou,barri,2020,390
+el poblenou,barri,2021,388
+el poblenou,barri,2022,386
+el poblenou,barri,2023,422
+diagonal mar i el front maritim del poblenou,barri,2014,145
+diagonal mar i el front maritim del poblenou,barri,2015,145
+diagonal mar i el front maritim del poblenou,barri,2016,129
+diagonal mar i el front maritim del poblenou,barri,2017,129
+diagonal mar i el front maritim del poblenou,barri,2018,128
+diagonal mar i el front maritim del poblenou,barri,2019,128
+diagonal mar i el front maritim del poblenou,barri,2020,127
+diagonal mar i el front maritim del poblenou,barri,2021,126
+diagonal mar i el front maritim del poblenou,barri,2022,125
+diagonal mar i el front maritim del poblenou,barri,2023,125
+el besos i el maresme,barri,2014,30
+el besos i el maresme,barri,2015,30
+el besos i el maresme,barri,2016,32
+el besos i el maresme,barri,2017,32
+el besos i el maresme,barri,2018,32
+el besos i el maresme,barri,2019,32
+el besos i el maresme,barri,2020,32
+el besos i el maresme,barri,2021,32
+el besos i el maresme,barri,2022,32
+el besos i el maresme,barri,2023,32
+provencals del poblenou,barri,2014,36
+provencals del poblenou,barri,2015,36
+provencals del poblenou,barri,2016,41
+provencals del poblenou,barri,2017,41
+provencals del poblenou,barri,2018,34
+provencals del poblenou,barri,2019,34
+provencals del poblenou,barri,2020,34
+provencals del poblenou,barri,2021,32
+provencals del poblenou,barri,2022,31
+provencals del poblenou,barri,2023,33
+sant marti de provencals,barri,2014,9
+sant marti de provencals,barri,2015,9
+sant marti de provencals,barri,2016,15
+sant marti de provencals,barri,2017,15
+sant marti de provencals,barri,2018,15
+sant marti de provencals,barri,2019,15
+sant marti de provencals,barri,2020,15
+sant marti de provencals,barri,2021,14
+sant marti de provencals,barri,2022,14
+sant marti de provencals,barri,2023,14
+la verneda i la pau,barri,2014,6
+la verneda i la pau,barri,2015,6
+la verneda i la pau,barri,2016,9
+la verneda i la pau,barri,2017,9
+la verneda i la pau,barri,2018,9
+la verneda i la pau,barri,2019,9
+la verneda i la pau,barri,2020,9
+la verneda i la pau,barri,2021,9
+la verneda i la pau,barri,2022,9
+la verneda i la pau,barri,2023,9
