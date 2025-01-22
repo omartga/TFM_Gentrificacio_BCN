@@ -1,0 +1,1673 @@
+---
+title: "codi_TFM"
+author: "Oriol Martínez"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Llibreries
+
+```{r warning=FALSE}
+library(readr)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(stringr)
+library(stringi)
+library(RColorBrewer)
+library(cluster)
+library(factoextra)
+library(zoo)
+library(tibble)
+library(umap)
+library(gridExtra)
+library(htmlwidgets)
+library(nnet)
+library(shiny)
+library(sf)
+library(vegan)
+library(pairwiseAdonis)
+library(stats)
+library(rpart)
+library(rpart.plot)
+library(caret)
+library(gplots)
+
+```
+
+```{r}
+set.seed(123)
+```
+
+# Càrrega de dades
+
+```{r message=FALSE, warning=FALSE}
+pmll <- read_csv("1. Dades_en_brut/Taula estadística - Preu mitjà (€) del lloguer d'habitatges.zip")
+
+emn <- read_csv("1. Dades_en_brut/Taula estadística - Edat mitjana de la població segons nacionalitat (Espanya_UE_Resta estranger).zip")
+
+pnbcn <- read_csv("1. Dades_en_brut/Taula estadística - Població per nacionalitat (Espanya_UE_Resta estranger).zip")
+
+epn <- read_csv("1. Dades_en_brut/Taula estadística - Població de 16 anys i més per titulació acadèmica i nacionalitat (Espanya_UE_Resta estranger).zip")
+
+hut <- read_csv("1. Dades_en_brut/Taula estadística - Nombre d’habitatges d’ús turístic.zip")
+
+mapa <- st_read("1. Dades_en_brut/BCN_UNITATS_ADM/0301040100_Barris_UNITATS_ADM.shp")
+
+mapa.d <- st_read("1. Dades_en_brut/BCN_UNITATS_ADM/0301040100_Districtes_UNITATS_ADM.shp")
+
+```
+
+
+# Dades
+
+## Mapa de Barcelona (barris i districtes)
+
+```{r warning=FALSE}
+bcn_barri <- mapa[, c("NOM", "geometry")]
+
+bcn_districte <- mapa.d[, c("NOM", "geometry")]
+
+bcn_barri <- bcn_barri %>%
+  mutate(territori = tolower(NOM),
+         territori = iconv(territori, "UTF-8", "ASCII//TRANSLIT"),
+         territori = ifelse(territori == "sants - badal", "sants-badal", territori),
+         territori = ifelse(territori == "sant andreu (barri)", "sant andreu", territori),
+         territori = ifelse(territori == "sant gervasi - galvany", "sant gervasi-galvany", territori),
+         territori = ifelse(territori == "sant gervasi - la bonanova", "sant gervasi-la bonanova", territori),
+         territori = ifelse(territori == "el poble sec - aei parc montjuic", "el poble sec", territori),
+         territori = ifelse(territori == "la marina del prat vermell - aei zona franca", "la marina del prat vermell", territori))
+
+bcn_districte <- bcn_districte %>%
+  mutate(territori = tolower(NOM),
+         territori = iconv(territori, "UTF-8", "ASCII//TRANSLIT"))
+```
+
+## Colors
+### Districte
+```{r}
+color_districte <- c("ciutat vella" = "#27F4D2",
+                     "eixample" = "#3671C6",
+                     "sants-montjuic" = "#E8002D",
+                     "les corts" = "#FF8000",
+                     "sarria-sant gervasi" = "#FF87BC",
+                     "gracia" = "#6692FF",
+                     "horta-guinardo" = "#229971",
+                     "nou barris" = "#64C4FF",
+                     "sant andreu" = "#52E252",
+                     "sant marti" = "#B6BABD")
+```
+
+
+### Barri
+
+```{r}
+color_barri <- c(
+  "el raval" = "#FF0000",
+  "el barri gotic" = "#686A6C",
+  "la barceloneta" = "#FFFF00",
+  "sant pere, santa caterina i la ribera" = "#ADD8E6",
+  "el fort pienc" = "#0000FF",
+  "la sagrada familia" = "#FFCCCB",
+  "la dreta de l'eixample" = "#46F0F0",
+  "l'antiga esquerra de l'eixample" = "#00FFFF",
+  "la nova esquerra de l'eixample" = "#008000",
+  "sant antoni" = "#00FF00",
+  "el poble-sec" = "#FFA500",
+  "la marina del prat vermell" = "#966F33",
+  "la marina de port" = "#AAFFC3",
+  "la font de la guatlla" = "#00008B",
+  "hostafrancs" = "#FF00FF",
+  "la bordeta" = "#FFC0CB",
+  "sants-badal" = "#800080",
+  "sants" = "#660000",
+  "les corts" = "#7FFFD4",
+  "la maternitat i sant ramon" = "#FFD700",
+  "pedralbes" = "#800000",
+  "vallvidrera, el tibidabo i les planes" = "#728FCE",
+  "sarria" = "#006400",
+  "les tres torres" = "#2B65EC",
+  "sant gervasi-la bonanova" = "#A52A2A",
+  "sant gervasi-galvany" = "#98AFC7",
+  "el putxet i el farro" = "#87CEEB",
+  "vallcarca i els penitents" = "#808000",
+  "el coll" = "#AA6C39",
+  "la salut" = "#800000",
+  "la vila de gracia" = "#AAFFC3",
+  "el camp d'en grassot i gracia nova" = "#000080",
+  "el baix guinardo" = "#FFFDD0",
+  "can baro" = "#1E90FF",
+  "el guinardo" = "#A9A9A9",
+  "la font d'en fargues" = "#FFCE44",
+  "el carmel" = "#E5E4E2",
+  "la teixonera" = "#22CE83",
+  "sant genis dels agudells" = "#2F539B",
+  "montbau" = "#F535AA",
+  "la vall d'hebron" = "#F8F6F0",
+  "la clota" = "#FAAFBA",
+  "horta" = "#34282C",
+  "vilapicina i la torre llobeta" = "#151B54",
+  "porta" = "#848B79",
+  "el turo de la peira" = "#3A3B3C",
+  "can peguera" = "#F5F5DC",
+  "la guineueta" = "#D4AF37",
+  "canyelles" = "#FED8B1",
+  "les roquetes" = "#90EE90",
+  "verdun" = "#4863A0",
+  "la prosperitat" = "#254117",
+  "la trinitat nova" = "#C2DFFF",
+  "torre baro" = "#F70D1A",
+  "ciutat meridiana" = "#6495ED",
+  "vallbona" = "#36013F",
+  "la trinitat vella" = "#046307",
+  "baro de viver" = "#9ACD32",
+  "el bon pastor" = "#368BC1",
+  "sant andreu" = "#FFFFF4",
+  "la sagrera" = "#583759",
+  "el congres i els indians" = "#FDD017",
+  "navas" = "#12AD2B",
+  "el camp de l'arpa del clot" = "#E75480",
+  "el clot" = "#EB5406",
+  "el parc i la llacuna del poblenou" = "#FF6700",
+  "la vila olimpica del poblenou" = "#36F57F",
+  "el poblenou" = "#FBF6D9",
+  "diagonal mar i el front maritim del poblenou" = "#6F4E37",
+  "el besos i el maresme" = "#E41B17",
+  "provencals del poblenou" = "#85BB65",
+  "sant marti de provencals" = "#7E3517",
+  "la verneda i la pau" = "#EAC117"
+)
+```
+
+
+### Variables
+
+```{r}
+color_variable <- c(
+  "edat_mitjana.espanya" = "#004d98",
+  "edat_mitjana.resta de la unio europea" = "#a50044",
+  "edat_mitjana.resta del mon" = "#ffed02",
+  "preu_mitja_lloguer" = "#8ac3ee",
+  "poblacio.espanya" = "#b19221",
+  "poblacio.resta de la unio europea" = "#7da738",
+  "poblacio.resta del mon" = "#921b88",
+  "sense estudis_espanya" = "#168554",
+  "sense estudis_resta de la unio europea" = "#aa2d2a",
+  "sense estudis_resta del mon" = "#d18816",
+  "estudis primaris, certificat d'escolaritat, egb_espanya" = "#db5232",
+  "estudis primaris, certificat d'escolaritat, egb_resta de la unio europea" = "#009ad7",
+  "estudis primaris, certificat d'escolaritat, egb_resta del mon" = "#0761af",
+  "batxillerat elemental, graduat escolar, eso, fpi_espanya" = "#27F4D2",
+  "batxillerat elemental, graduat escolar, eso, fpi_resta de la unio europea" = "#34A56F",
+  "batxillerat elemental, graduat escolar, eso, fpi_resta del mon" = "#6F4E37",
+  "batxillerat superior, bup, cou, fpii, cfgm grau mitja_espanya" = "#FF6700",
+  "batxillerat superior, bup, cou, fpii, cfgm grau mitja_resta de la unio europea" = "#36013F",
+  "batxillerat superior, bup, cou, fpii, cfgm grau mitja_resta del mon" = "#C2DFFF",
+  "estudis universitaris, cfgs grau superior_espanya" = "#3A3B3C",
+  "estudis universitaris, cfgs grau superior_resta de la unio europea" = "#F535AA",
+  "estudis universitaris, cfgs grau superior_resta del mon" = "#800000",
+  "habitatges_us_turistic" = "#808000"
+)
+```
+
+
+## Preu mitja lloguer (pmll)
+
+### Neteja
+
+```{r warning=FALSE}
+summary(pmll)
+```
+
+```{r warning=FALSE}
+pmll2 <- pmll %>%
+  rename_all(tolower) %>%
+  rename_all(~gsub(" ", "_", .)) %>%
+  mutate_all(~iconv(., from = 'UTF-8', to = 'ASCII//TRANSLIT')) %>%
+  mutate_all(tolower) %>%
+  mutate(across(-c(1,2), as.numeric)) %>%
+  pivot_longer(cols = -c(territori, tipus_de_territori),
+               names_to = "anys",
+               values_to = "preu_mitja_lloguer") %>%
+  mutate(anys = as.integer(anys)) %>%
+  mutate(territori = ifelse(territori == "sants - badal", "sants-badal", territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (districte)", "districte", tipus_de_territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (barri)", "barri", tipus_de_territori),
+         territori = ifelse(territori == "sant andreu (districte)", "sant andreu", territori),
+         territori = ifelse(territori == "sant andreu (barri)", "sant andreu", territori),
+         territori = ifelse(territori == "sant gervasi - galvany", "sant gervasi-galvany", territori),
+         territori = ifelse(territori == "sant gervasi - la bonanova", "sant gervasi-la bonanova", territori),
+         territori = ifelse(territori == "el poble sec - aei parc montjuic", "el poble-sec", territori),
+         territori = ifelse(territori == "la marina del prat vermell - aei zona franca", "la marina del prat vermell", territori) )
+```
+
+```{r}
+pmll2.b <- pmll2 %>%
+  subset(pmll2$tipus_de_territori == "barri") %>%
+  na.omit() %>%
+  select(-c(tipus_de_territori))
+
+pmll2.d <- pmll2 %>%
+  subset(pmll2$tipus_de_territori == "districte") %>%
+  na.omit() %>%
+  select(-c(tipus_de_territori))
+```
+
+### Gràfiques
+
+#### districte
+
+```{r}
+barc <- pmll2 %>%
+  subset(pmll2$tipus_de_territori == "municipi") %>%
+  na.omit() %>%
+  select(-c(tipus_de_territori))
+
+ggplot(data = pmll2.d, 
+       aes(x = anys, y = preu_mitja_lloguer, color = territori)) +
+  geom_point()+
+  geom_line() +
+  geom_line(data = barc, aes(x = anys, y = preu_mitja_lloguer), color = "black") +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+```
+
+#### barri
+```{r}
+pl <- ggplot(data = pmll2.b, 
+       aes(x = anys, y = preu_mitja_lloguer, color = territori)) +
+  geom_point()+
+  geom_line() +
+  geom_line(data = barc, aes(x = anys, y = preu_mitja_lloguer), color = "black") +
+  scale_color_manual(values = color_barri) +
+  theme(legend.position = "bottom")
+
+ggplotly(pl)
+```
+
+#### 4plot
+
+```{r}
+llmap <- pmll2 %>%
+  subset(pmll2$tipus_de_territori == "barri")
+llmap <- left_join(llmap, bcn_barri, by = "territori")
+llmap.b <- left_join(pmll2, bcn_barri, by = "territori")
+llmap.d <- left_join(pmll2, bcn_barri, by = "territori")
+```
+
+```{r}
+pm2023 <- subset(llmap.b, llmap.b$anys == 2023)
+
+pm2020 <- subset(llmap.b, llmap.b$anys == 2020)
+
+pm2017 <- subset(llmap.b, llmap.b$anys == 2017)
+
+pm2014 <- subset(llmap.b, llmap.b$anys == 2014)
+
+pm.g_min <- min(c(pm2023$preu_mitja_lloguer, pm2020$preu_mitja_lloguer, pm2017$preu_mitja_lloguer, pm2014$preu_mitja_lloguer), na.rm = TRUE)
+
+pm.g_max <- max(c(pm2023$preu_mitja_lloguer, pm2020$preu_mitja_lloguer, pm2017$preu_mitja_lloguer, pm2014$preu_mitja_lloguer), na.rm = TRUE)
+
+pm.g_mid <- (pm.g_min + pm.g_max) / 2
+
+
+pm1.b <- ggplot() +
+  geom_sf(data = pm2023$geometry, aes(fill = pm2023$preu_mitja_lloguer)) +
+  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", 
+                       midpoint = (pm.g_mid),
+                       limits = c(pm.g_min,pm.g_max)) +
+  theme_minimal() +
+  labs(title = "2023")
+
+pm2.b <- ggplot() +
+  geom_sf(data = pm2020$geometry, aes(fill = pm2020$preu_mitja_lloguer)) +
+  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", 
+                       midpoint = (pm.g_mid),
+                       limits = c(pm.g_min,pm.g_max)) +
+  theme_minimal() +
+  labs(title = "2020")
+
+pm3.b <- ggplot() +
+  geom_sf(data = pm2017$geometry, aes(fill = pm2017$preu_mitja_lloguer)) +
+  scale_fill_gradient2(low = "blue", mid = "yellow", high = "red", 
+                       midpoint = (pm.g_mid),
+                       limits = c(pm.g_min,pm.g_max)) +
+  theme_minimal() +
+  labs(title = "2017")
+
+pm4.b <- ggplot() +
+  geom_sf(data = pm2014$geometry, aes(fill = pm2014$preu_mitja_lloguer)) +
+  scale_fill_gradient2(low = "#0000ff", mid = "#ffff00", high = "#ff0000", 
+                       midpoint = (pm.g_mid),
+                       limits = c(pm.g_min,pm.g_max)) +
+  theme_minimal() +
+  labs(title = "2014")
+
+grid.arrange(pm4.b, pm3.b, pm2.b, pm1.b)
+```
+
+
+## Edat mitjana per nacionalitat (emn)
+
+### Neteja
+
+```{r}
+summary(emn)
+```
+
+```{r warning=FALSE}
+emn2 <- emn %>%
+  rename_all(tolower) %>%
+  rename_all(~gsub(" ", "_", .)) %>%
+  rename(nacionalitat = 'nacionalitat_(espanya/ue/resta_estranger)') %>%
+  mutate_all(~iconv(., from = 'UTF-8', to = 'ASCII//TRANSLIT')) %>%
+  mutate_all(tolower) %>%
+  rename_with(~ substr(., start = nchar(.) - 3, stop = nchar(.)), -c(1,2,3)) %>%
+  pivot_longer(cols = -c(territori, tipus_de_territori, nacionalitat),
+               names_to = "anys",
+               values_to = "edat_mitjana") %>%
+  subset(nacionalitat != "no consta") %>%
+  pivot_wider(names_from = nacionalitat, names_prefix = "edat_mitjana.", values_from = edat_mitjana)  %>%
+  mutate(across(-c(1,2), as.numeric)) %>%
+  mutate(territori = ifelse(territori == "sants - badal", "sants-badal", territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (districte)", "districte", tipus_de_territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (barri)", "barri", tipus_de_territori),
+         territori = ifelse(territori == "sant andreu (districte)", "sant andreu", territori),
+         territori = ifelse(territori == "sant andreu (barri)", "sant andreu", territori),
+         territori = ifelse(territori == "sant gervasi - galvany", "sant gervasi-galvany", territori),
+         territori = ifelse(territori == "sant gervasi - la bonanova", "sant gervasi-la bonanova", territori)) %>%
+  mutate(anys = as.integer(anys))
+```
+
+```{r}
+emn2.b <- emn2 %>%
+  subset(emn2$tipus_de_territori == "barri") %>%
+  select(-c(tipus_de_territori))
+
+emn2.d <- emn2 %>%
+  subset(emn2$tipus_de_territori == "districte") %>%
+  na.omit() %>%
+  select(-c(tipus_de_territori))
+```
+
+### Gràfiques
+
+#### districte
+
+```{r}
+ggplot(data = emn2.d, aes(x = anys)) +
+  geom_point(aes(y = edat_mitjana.espanya, color = territori)) +
+  geom_line(aes(y = edat_mitjana.espanya, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = emn2.d, aes(x = anys)) +
+  geom_line(aes(y = `edat_mitjana.resta de la unio europea`, color = territori)) +
+  geom_point(aes(y = `edat_mitjana.resta de la unio europea`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = emn2.d, aes(x = anys)) +
+  geom_line(aes(y = `edat_mitjana.resta del mon`, color = territori)) +
+  geom_point(aes(y = `edat_mitjana.resta del mon`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+emap <- left_join(emn2.b, bcn_barri, by = "territori")
+emap.b <- left_join(emn2.b, bcn_barri, by = "territori")
+emap.d <- left_join(emn2.d, bcn_districte, by = "territori")
+```
+
+
+#### 4plot
+
+```{r}
+em2023 <- subset(emap.b, emap.b$anys == 2023)
+
+em2020 <- subset(emap.b, emap.b$anys == 2020)
+
+em2017 <- subset(emap.b, emap.b$anys == 2017)
+
+em2014 <- subset(emap.b, emap.b$anys == 2014)
+
+pn.g_min <- min(c(em2023$edat_mitjana.espanya, em2020$edat_mitjana.espanya, em2017$edat_mitjana.espanya, em2014$edat_mitjana.espanya), na.rm = TRUE)
+
+pn.g_max <- max(c(em2023$edat_mitjana.espanya, em2020$edat_mitjana.espanya, em2017$edat_mitjana.espanya, em2014$edat_mitjana.espanya), na.rm = TRUE)
+
+pn.g_mid <- (pn.g_min + pn.g_max) / 2
+
+
+pn1.b <- ggplot() +
+  geom_sf(data = em2023$geometry, aes(fill = em2023$edat_mitjana.espanya)) +
+  scale_fill_gradient2(low = "#00ff00", mid = "#ffffff", high = "#882fdc", 
+                       midpoint = (pn.g_mid),
+                       limits = c(pn.g_min,pn.g_max)) +
+  theme_minimal() +
+  labs(title = "2023")
+
+pn2.b <- ggplot() +
+  geom_sf(data = em2020$geometry, aes(fill = em2020$edat_mitjana.espanya)) +
+  scale_fill_gradient2(low = "#00ff00", mid = "#ffffff", high = "#882fdc", 
+                       midpoint = (pn.g_mid),
+                       limits = c(pn.g_min,pn.g_max)) +
+  theme_minimal() +
+  labs(title = "2020")
+
+pn3.b <- ggplot() +
+  geom_sf(data = em2017$geometry, aes(fill = em2017$edat_mitjana.espanya)) +
+  scale_fill_gradient2(low = "#00ff00", mid = "#ffffff", high = "#882fdc", 
+                       midpoint = (pn.g_mid),
+                       limits = c(pn.g_min,pn.g_max)) +
+  theme_minimal() +
+  labs(title = "2017")
+
+pn4.b <- ggplot() +
+  geom_sf(data = em2014$geometry, aes(fill = em2014$edat_mitjana.espanya)) +
+  scale_fill_gradient2(low = "#00ff00", mid = "#ffffff", high = "#882fdc", 
+                       midpoint = (pn.g_mid),
+                       limits = c(pn.g_min,pn.g_max)) +
+  theme_minimal() +
+  labs(title = "2014")
+
+grid.arrange(pn4.b, pn3.b, pn2.b, pn1.b)
+```
+
+
+## Poblacio per nacionalitat (pnbcn)
+
+
+### Neteja
+
+```{r}
+summary(pnbcn)
+```
+
+```{r}
+pnbcn2 <- pnbcn %>%
+  rename_all(tolower) %>%
+  rename_all(~gsub(" ", "_", .)) %>%
+  rename(nacionalitat = 'nacionalitat_(espanya/ue/resta_estranger)') %>%
+  mutate_all(~iconv(., from = 'UTF-8', to = 'ASCII//TRANSLIT')) %>%
+  mutate_all(tolower) %>%
+  rename_with(~ substr(., start = nchar(.) - 3, stop = nchar(.)), -c(1,2,3)) %>%
+  pivot_longer(cols = -c(territori, tipus_de_territori, nacionalitat),
+               names_to = "anys",
+               values_to = "poblacio") %>%
+  subset(nacionalitat != "no consta") %>%
+  pivot_wider(names_from = nacionalitat, names_prefix = "poblacio.", values_from = poblacio)  %>%
+  mutate(across(-c(1,2), as.numeric)) %>%
+  mutate(territori = ifelse(territori == "sants - badal", "sants-badal", territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (districte)", "districte", tipus_de_territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (barri)", "barri", tipus_de_territori),
+         territori = ifelse(territori == "sant andreu (districte)", "sant andreu", territori),
+         territori = ifelse(territori == "sant andreu (barri)", "sant andreu", territori),
+         territori = ifelse(territori == "sant gervasi - galvany", "sant gervasi-galvany", territori),
+         territori = ifelse(territori == "sant gervasi - la bonanova", "sant gervasi-la bonanova", territori)) %>%
+  mutate(anys = as.integer(anys))
+```
+
+```{r}
+pnbcn2.b <- pnbcn2 %>%
+  subset(pnbcn2$tipus_de_territori == "barri") %>%
+  select(-c(tipus_de_territori))
+
+pnbcn2.d <- pnbcn2 %>%
+  subset(pnbcn2$tipus_de_territori == "districte") %>%
+  na.omit() %>%
+  select(-c(tipus_de_territori))
+```
+
+### Gràfiques
+#### districte
+
+```{r}
+ggplot(data = pnbcn2.d, aes(x = anys)) +
+  geom_point(aes(y = poblacio.espanya, color = territori)) +
+  geom_line(aes(y = poblacio.espanya, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = pnbcn2.d, aes(x = anys)) +
+  geom_line(aes(y = `poblacio.resta de la unio europea`, color = territori)) +
+  geom_point(aes(y = `poblacio.resta de la unio europea`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = pnbcn2.d, aes(x = anys)) +
+  geom_line(aes(y = `poblacio.resta del mon`, color = territori)) +
+  geom_point(aes(y = `poblacio.resta del mon`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+pobmap <- left_join(pnbcn2.b, bcn_barri, by = "territori")
+
+pobmap.b <- left_join(pnbcn2.b, bcn_barri, by = "territori")
+pobmap.d <- left_join(pnbcn2.d, bcn_districte, by = "territori")
+
+```
+
+#### 4plot
+
+```{r}
+pn2023 <- subset(pobmap.b, pobmap.b$anys == 2023)
+
+pn2014 <- subset(pobmap.b, pobmap.b$anys == 2014)
+
+pn2005 <- subset(pobmap.b, pobmap.b$anys == 2005)
+
+pn1997 <- subset(pobmap.b, pobmap.b$anys == 1997)
+
+pn.g_min <- min(c(pn2023$poblacio.espanya, pn2014$poblacio.espanya, pn2005$poblacio.espanya, pn1997$poblacio.espanya), na.rm = TRUE)
+
+pn.g_max <- max(c(pn2023$poblacio.espanya, pn2014$poblacio.espanya, pn2005$poblacio.espanya, pn1997$poblacio.espanya), na.rm = TRUE)
+
+pn.g_mid <- (pn.g_min + pn.g_max) / 2
+
+
+pn1.b <- ggplot() +
+  geom_sf(data = pn2023$geometry, aes(fill = pn2023$`poblacio.resta del mon`)) +
+  scale_fill_gradient2(low = "#41d15d", mid = "#d15d41", high = "#5d41d1",
+                       midpoint = (min(pn2023$`poblacio.resta del mon`, na.rm = TRUE)+max(pn2023$`poblacio.resta del mon`, na.rm = TRUE))/2,
+                       limits = c(min(pn2023$`poblacio.resta del mon`, na.rm = TRUE),max(pn2023$`poblacio.resta del mon`, na.rm = TRUE))) +
+  theme_minimal() +
+  labs(title = "2023")
+
+pn2.b <- ggplot() +
+  geom_sf(data = pn2014$geometry, aes(fill = pn2014$`poblacio.resta del mon`)) +
+  scale_fill_gradient2(low = "#41d15d", mid = "#d15d41", high = "#5d41d1",
+                       midpoint = (min(pn2014$`poblacio.resta del mon`, na.rm = TRUE)+max(pn2014$`poblacio.resta del mon`, na.rm = TRUE))/2,
+                       limits = c(min(pn2014$`poblacio.resta del mon`, na.rm = TRUE),max(pn2014$`poblacio.resta del mon`, na.rm = TRUE))) +
+  theme_minimal() +
+  labs(title = "2014")
+
+pn3.b <- ggplot() +
+  geom_sf(data = pn2005$geometry, aes(fill = pn2005$`poblacio.resta del mon`)) +
+  scale_fill_gradient2(low = "#41d15d", mid = "#d15d41", high = "#5d41d1",
+                       midpoint = (min(pn2005$`poblacio.resta del mon`, na.rm = TRUE)+max(pn2005$`poblacio.resta del mon`, na.rm = TRUE))/2,
+                       limits = c(min(pn2005$`poblacio.resta del mon`, na.rm = TRUE),max(pn2005$`poblacio.resta del mon`, na.rm = TRUE))) +
+  theme_minimal() +
+  labs(title = "2005")
+
+pn4.b <- ggplot() +
+  geom_sf(data = pn1997$geometry, aes(fill = pn1997$`poblacio.resta del mon`)) +
+  scale_fill_gradient2(low = "#41d15d", mid = "#d15d41", high = "#5d41d1",
+                       midpoint = (min(pn1997$`poblacio.resta del mon`, na.rm = TRUE)+max(pn1997$`poblacio.resta del mon`, na.rm = TRUE))/2,
+                       limits = c(min(pn1997$`poblacio.resta del mon`, na.rm = TRUE),max(pn1997$`poblacio.resta del mon`, na.rm = TRUE))) +
+  theme_minimal() +
+  labs(title = "1997")
+
+grid.arrange(pn4.b, pn3.b, pn2.b, pn1.b)
+```
+
+## Estudis poblacio per nacionalitat (epn)
+
+
+### Neteja
+
+```{r}
+summary(epn)
+```
+
+```{r}
+epn2 <- epn %>%
+  rename_all(tolower) %>%
+  rename_all(~gsub(" ", "_", .)) %>%
+  rename_all(~stri_trans_general(., "Latin-ASCII")) %>%
+  mutate_all(~iconv(., from = 'UTF-8', to = 'ASCII//TRANSLIT')) %>%
+  mutate_all(tolower)  %>%
+  pivot_longer(cols = -c(territori, tipus_de_territori, titulacio_academica), names_to = "anys", values_to = "nombre_titulacions") %>%
+  subset(nombre_titulacions != "no consta")
+```
+
+```{r}
+epn21 <- epn2 %>%
+  subset(tipus_de_territori == "tipus de territori") %>%
+  select(-c(1:3))
+  
+epn22 <- epn2 %>%
+  subset(tipus_de_territori != "tipus de territori")
+```
+
+```{r}
+epn3 <- epn22 %>% 
+  left_join(epn21, by = "anys") %>%
+  rename(nombre_titulacions = nombre_titulacions.x) %>%
+  rename(procedencia = nombre_titulacions.y) %>%
+  mutate(anys = str_extract(anys, "\\d{4}")) %>%
+  subset(procedencia != "no consta" & titulacio_academica != "no consta") %>%
+  pivot_wider(names_from = c("titulacio_academica", "procedencia"), values_from = nombre_titulacions) %>%
+  mutate(across(-c(1,2), as.integer)) %>%
+  mutate(territori = ifelse(territori == "sants - badal", "sants-badal", territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (districte)", "districte", tipus_de_territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (barri)", "barri", tipus_de_territori),
+         territori = ifelse(territori == "sant andreu (districte)", "sant andreu", territori),
+         territori = ifelse(territori == "sant andreu (barri)", "sant andreu", territori),
+         territori = ifelse(territori == "sant gervasi - galvany", "sant gervasi-galvany", territori),
+         territori = ifelse(territori == "sant gervasi - la bonanova", "sant gervasi-la bonanova", territori))
+```
+
+```{r}
+epn3.b <- epn3 %>%
+  subset(epn3$tipus_de_territori == "barri") %>%
+  select(-c(tipus_de_territori))
+
+epn3.d <- epn3 %>%
+  subset(epn3$tipus_de_territori == "districte") %>%
+  na.omit() %>%
+  select(-c(tipus_de_territori))
+```
+
+### Gràfiques
+
+#### districte
+
+```{r}
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_point(aes(y = `sense estudis_espanya`, color = territori)) +
+  geom_line(aes(y = `sense estudis_espanya`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `sense estudis_resta de la unio europea`, color = territori)) +
+  geom_point(aes(y = `sense estudis_resta de la unio europea`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `sense estudis_resta del mon`, color = territori)) +
+  geom_point(aes(y = `sense estudis_resta del mon`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `estudis primaris, certificat d'escolaritat, egb_espanya`, color = territori)) +
+  geom_point(aes(y = `estudis primaris, certificat d'escolaritat, egb_espanya`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `estudis primaris, certificat d'escolaritat, egb_resta de la unio europea`, color = territori)) +
+  geom_point(aes(y = `estudis primaris, certificat d'escolaritat, egb_resta de la unio europea`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `estudis primaris, certificat d'escolaritat, egb_resta del mon`, color = territori)) +
+  geom_point(aes(y = `estudis primaris, certificat d'escolaritat, egb_resta del mon`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `batxillerat elemental, graduat escolar, eso, fpi_espanya`, color = territori)) +
+  geom_point(aes(y = `batxillerat elemental, graduat escolar, eso, fpi_espanya`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `batxillerat elemental, graduat escolar, eso, fpi_resta de la unio europea`, color = territori)) +
+  geom_point(aes(y = `batxillerat elemental, graduat escolar, eso, fpi_resta de la unio europea`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `batxillerat elemental, graduat escolar, eso, fpi_resta del mon`, color = territori)) +
+  geom_point(aes(y = `batxillerat elemental, graduat escolar, eso, fpi_resta del mon`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `batxillerat superior, bup, cou, fpii, cfgm grau mitja_espanya`, color = territori)) +
+  geom_point(aes(y = `batxillerat superior, bup, cou, fpii, cfgm grau mitja_espanya`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `batxillerat superior, bup, cou, fpii, cfgm grau mitja_resta de la unio europea`, color = territori)) +
+  geom_point(aes(y = `batxillerat superior, bup, cou, fpii, cfgm grau mitja_resta de la unio europea`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `batxillerat superior, bup, cou, fpii, cfgm grau mitja_resta del mon`, color = territori)) +
+  geom_point(aes(y = `batxillerat superior, bup, cou, fpii, cfgm grau mitja_resta del mon`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `estudis universitaris, cfgs grau superior_espanya`, color = territori)) +
+  geom_point(aes(y = `estudis universitaris, cfgs grau superior_espanya`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `estudis universitaris, cfgs grau superior_resta de la unio europea`, color = territori)) +
+  geom_point(aes(y = `estudis universitaris, cfgs grau superior_resta de la unio europea`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+
+ggplot(data = epn3.d, aes(x = anys)) +
+  geom_line(aes(y = `estudis universitaris, cfgs grau superior_resta del mon`, color = territori)) +
+  geom_point(aes(y = `estudis universitaris, cfgs grau superior_resta del mon`, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+epnmap <- left_join(epn3.d, bcn_barri, by = "territori")
+epnmap.b <- left_join(epn3.b, bcn_barri, by = "territori")
+
+```
+
+#### 4plot
+
+
+```{r}
+
+epn2023 <- subset(epnmap.b, epnmap.b$anys == 2023)
+
+epn2014 <- subset(epnmap.b, epnmap.b$anys == 2014)
+
+epn2005 <- subset(epnmap.b, epnmap.b$anys == 2005)
+
+epn1997 <- subset(epnmap.b, epnmap.b$anys == 1997)
+
+global_min <- min(c(epn2023$`sense estudis_espanya`, epn2014$`sense estudis_espanya`, epn2005$`sense estudis_espanya`, epn2014$`sense estudis_espanya`), na.rm = TRUE)
+
+global_max <- max(c(epn2023$`sense estudis_espanya`, epn2014$`sense estudis_espanya`, epn2005$`sense estudis_espanya`, epn1997$`sense estudis_espanya`), na.rm = TRUE)
+
+global_mid <- (global_min + global_max) / 2
+
+
+ep1.b <- ggplot() +
+  geom_sf(data = epn2023$geometry, aes(fill = epn2023$`sense estudis_espanya`)) +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", 
+                       midpoint = (global_mid),
+                       limits = c(global_min,global_max)) +
+  theme_minimal() +
+  labs(title = "2023")
+
+ep2.b <- ggplot() +
+  geom_sf(data = epn2014$geometry, aes(fill = epn2014$`sense estudis_espanya`)) +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", 
+                       midpoint = (global_mid),
+                       limits = c(global_min,global_max)) +
+  theme_minimal() +
+  labs(title = "2014")
+
+ep3.b <- ggplot() +
+  geom_sf(data = epn2005$geometry, aes(fill = epn2005$`sense estudis_espanya`)) +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", 
+                       midpoint = (global_mid),
+                       limits = c(global_min,global_max)) +
+  theme_minimal() +
+  labs(title = "2005")
+
+ep4.b <- ggplot() +
+  geom_sf(data = epn1997$geometry, aes(fill = epn1997$`sense estudis_espanya`)) +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", 
+                       midpoint = (global_mid),
+                       limits = c(global_min,global_max)) +
+  theme_minimal() +
+  labs(title = "1997")
+
+grid.arrange(ep4.b, ep3.b, ep2.b, ep1.b)
+```
+
+## Habitatges us turistics (hut)
+
+### Neteja
+
+```{r}
+summary(hut)
+```
+
+```{r}
+hut2 <- hut %>%
+  rename_all(tolower) %>%
+  rename_all(~gsub(" ", "_", .)) %>%
+  mutate_all(~iconv(., from = 'UTF-8', to = 'ASCII//TRANSLIT')) %>%
+  mutate_all(tolower) %>%
+  mutate(across(-c(1,2), as.numeric)) %>%
+  rename_with(~ substr(., start = nchar(.) - 3, stop = nchar(.)), -c(1,2)) %>%
+  mutate(tipus_de_territori = ifelse(territori == "sant andreu (districte)", "districte", tipus_de_territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (barri)", "barri", tipus_de_territori),
+         territori = ifelse(territori == "sant andreu (districte)", "sant andreu", territori),
+         territori = ifelse(territori == "sant andreu (barri)", "sant andreu", territori))
+```
+
+```{r}
+hut4 <- hut2 %>%
+  pivot_longer(cols = -c(territori, tipus_de_territori),
+               names_to = "anys",
+               values_to = "habitatges_us_turistic") %>%
+  mutate(anys = as.integer(anys),
+         habitatges_us_turistic = as.integer(habitatges_us_turistic)) %>%
+  mutate(territori = ifelse(territori == "sants - badal", "sants-badal", territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (districte)", "districte", tipus_de_territori),
+         tipus_de_territori = ifelse(territori == "sant andreu (barri)", "barri", tipus_de_territori),
+         territori = ifelse(territori == "sant andreu (districte)", "sant andreu", territori),
+         territori = ifelse(territori == "sant andreu (barri)", "sant andreu", territori),
+         territori = ifelse(territori == "sant gervasi - galvany", "sant gervasi-galvany", territori),
+         territori = ifelse(territori == "sant gervasi - la bonanova", "sant gervasi-la bonanova", territori) )
+```
+
+```{r}
+hut.b <- hut4 %>%
+  subset(hut4$tipus_de_territori == "barri") %>%
+  select(-c(tipus_de_territori))
+
+hut.d <- hut4 %>%
+  subset(hut4$tipus_de_territori == "districte") %>%
+  na.omit() %>%
+  select(-c(tipus_de_territori))
+```
+
+### Gràfiques
+
+#### districte
+
+```{r}
+ggplot(data = hut.d, aes(x = anys)) +
+  geom_line(aes(y = habitatges_us_turistic, color = territori)) +
+  geom_point(aes(y = habitatges_us_turistic, color = territori)) +
+  scale_color_manual(values = color_districte) +
+  theme(legend.position = "bottom")
+```
+
+#### barri
+```{r}
+hutmap <- left_join(hut.b, bcn_barri, by = "territori")
+```
+
+#### 4plot
+```{r}
+hut2023 <- subset(hutmap, hutmap$anys == 2023)
+
+hut2020 <- subset(hutmap, hutmap$anys == 2020)
+
+hut2017 <- subset(hutmap, hutmap$anys == 2017)
+
+hut2014 <- subset(hutmap, hutmap$anys == 2014)
+```
+
+```{r}
+hut.g_min <- min(c(hut2023$habitatges_us_turistic, hut2020$habitatges_us_turistic, hut2017$habitatges_us_turistic, hut2014$habitatges_us_turistic), na.rm = TRUE)
+
+hut.g_max <- max(c(hut2023$habitatges_us_turistic, hut2020$habitatges_us_turistic, hut2017$habitatges_us_turistic, hut2014$habitatges_us_turistic), na.rm = TRUE)
+
+hut.g_mid <- (hut.g_min + hut.g_max) / 2
+
+h1.b <- ggplot() +
+  geom_sf(data = hut2023$geometry, aes(fill = hut2023$habitatges_us_turistic)) +
+  scale_fill_gradient2(low = "white", mid = "#ff0000", high = "#400000", 
+                       midpoint = hut.g_mid,
+                       limits = c(hut.g_min, hut.g_max)) +
+  theme_minimal() +
+  labs(title = "2023")
+
+h2.b <- ggplot() +
+  geom_sf(data = hut2020$geometry, aes(fill = hut2020$habitatges_us_turistic)) +
+  scale_fill_gradient2(low = "white", mid = "#ff0000", high = "#400000", 
+                       midpoint = hut.g_mid,
+                       limits = c(hut.g_min, hut.g_max)) +
+  theme_minimal() +
+  labs(title = "2020")
+
+h3.b <- ggplot() +
+  geom_sf(data = hut2017$geometry, aes(fill = hut2017$habitatges_us_turistic)) +
+  scale_fill_gradient2(low = "white", mid = "#ff0000", high = "#400000", 
+                       midpoint = hut.g_mid,
+                       limits = c(hut.g_min, hut.g_max)) +
+  theme_minimal() +
+  labs(title = "2017")
+
+h4.b <- ggplot() +
+  geom_sf(data = hut2014$geometry, aes(fill = hut2014$habitatges_us_turistic)) +
+  scale_fill_gradient2(low = "white", mid = "#ff0000", high = "#400000", 
+                       midpoint = hut.g_mid,
+                       limits = c(hut.g_min, hut.g_max)) +
+  theme_minimal() +
+  labs(title = "2014")
+
+grid.arrange(h4.b, h3.b, h2.b, h1.b)
+
+```
+
+# Guardar dades
+
+```{r}
+write_csv(
+  pmll2,
+  "2. Dades_netes/preu_mitja_lloguer_BCN.csv",
+  na = "NA"
+)
+
+write_csv(
+  emn2,
+  "2. Dades_netes/edat_mitjana_nacionalitat_BCN.csv",
+  na = "NA"
+)
+
+write_csv(
+  pnbcn2,
+  "2. Dades_netes/poblacio_nacionalitat_BCN.csv",
+  na = "NA"
+)
+
+write_csv(
+  epn3,
+  "2. Dades_netes/estudis_poblacio_nacionalitat_BCN.csv"
+)
+
+write_csv(
+  hut4,
+  "2. Dades_netes/habitatges_us_turistic_BCN.csv",
+  na = "NA"
+)
+```
+
+# Clusteritzacio kmeans
+
+## MegaDataframe
+
+```{r}
+m.df <- left_join(x = emn2, y = pmll2, by = c("territori", "tipus_de_territori", "anys")) %>%
+  left_join(pnbcn2, by = c("territori", "tipus_de_territori", "anys")) %>% 
+  left_join(epn3, by = c("territori", "tipus_de_territori", "anys")) %>%
+  left_join(hut4, by = c("territori", "tipus_de_territori", "anys"))
+```
+
+
+## Dades districte
+
+```{r}
+m.df.districte <- m.df %>%
+  subset(tipus_de_territori == "districte")  %>%
+  select(-c("tipus_de_territori"))
+```
+
+### escala 01
+```{r}
+scale_01 <- function(x) {
+  return((x - min(x)) / (max(x) - min(x)))
+}
+```
+
+```{r}
+m.df.districte2 <- m.df.districte %>% 
+  mutate(id = str_c(territori, anys, sep = "_")) %>%
+  mutate_all(function(x) {
+    if(is.numeric(x)) {
+      x[is.na(x)] <- mean(x, na.rm = TRUE)
+    }
+    return(x)
+  }) %>%
+  mutate(across(where(is.numeric), scale))
+```
+
+```{r}
+m.df.d2 <- m.df.districte %>%
+  mutate(id = str_c(territori, anys, sep = "_")) %>%
+  mutate_all(function(x) {
+    if(is.numeric(x)) {
+      x[is.na(x)] <- mean(x, na.rm = TRUE)
+    }
+    return(x)
+  }) %>%
+  mutate(across(where(is.numeric), scale_01))
+```
+
+```{r}
+mDF_d <- m.df.districte2 %>%
+  select(!c("territori", "anys")) %>%
+  column_to_rownames("id")  %>%
+  as.matrix()
+```
+
+```{r}
+mDF_d2 <- m.df.d2 %>%
+  select(!c("territori", "anys")) %>%
+  column_to_rownames("id")  %>%
+  as.matrix()
+```
+
+
+```{r}
+fviz_nbclust(mDF_d, kmeans, method = "wss")
+```
+
+```{r}
+km_res <- kmeans(mDF_d, centers = 3, nstart = 25)
+fviz_cluster(km_res, data = mDF_d, repel = TRUE,
+             geom = "point", ellipse.type = 'none', ggtheme = theme_minimal())
+```
+
+```{r}
+km_res2 <- kmeans(mDF_d2, centers = 3, nstart = 25)
+```
+
+```{r}
+dis <- data.frame(mDF_d, cluster=km_res$cluster, territori=rownames(mDF_d))
+dis[,c("cluster", "territori")]
+```
+
+```{r}
+centroids <- as.data.frame(km_res$centers)
+range_of_centroids <- apply(centroids, 2, function(x) max(x) - min(x))
+
+importance_of_variables <- sort(range_of_centroids, decreasing = TRUE)
+
+print(importance_of_variables)
+```
+
+```{r}
+pca_result <- prcomp(mDF_d)
+fviz_eig(pca_result, addlabels = TRUE)
+```
+
+```{r}
+umap_result <- umap(mDF_d)
+
+umap_plot <- data.frame(umap_result$layout)
+colnames(umap_plot) <- c("UMAP1", "UMAP2")
+
+labels <-  as.factor(km_res$cluster)
+
+umap_plot$labels <-  labels
+
+umap.d <- ggplot(umap_plot, aes(x = UMAP1, y = UMAP2, color = labels)) +
+    geom_point(alpha = 0.6) +
+    labs(title = "UMAP Projection", x = "UMAP1", y = "UMAP2") +
+    theme_minimal()
+
+ggplotly(umap.d)
+```
+
+
+### Grafiques
+
+```{r}
+districte <- data.frame(m.df.districte[, c("territori", "anys")], cluster = km_res$cluster)
+
+mapbcn.d <-  left_join(x = districte, y = bcn_districte, by = c("territori"))
+
+bcn2023.d <- subset(mapbcn.d, mapbcn.d$anys == 2023)
+
+bcn2014.d <- subset(mapbcn.d, mapbcn.d$anys == 2014)
+
+bcn2005.d <- subset(mapbcn.d, mapbcn.d$anys == 2005)
+
+bcn1997.d <- subset(mapbcn.d, mapbcn.d$anys == 1997)
+```
+
+```{r}
+p1 <- ggplot() +
+  geom_sf(data = bcn2023.d$geometry, aes(fill = factor(bcn2023.d$cluster))) +
+  scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green")) +
+  theme_minimal() +
+  labs(title = "2023")
+
+p2 <- ggplot() +
+  geom_sf(data = bcn2014.d$geometry, aes(fill = factor(bcn2014.d$cluster))) +
+  scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green")) +
+  theme_minimal() +
+  labs(title = "2014")
+
+p3 <- ggplot() +
+  geom_sf(data = bcn2005.d$geometry, aes(fill = factor(bcn2005.d$cluster))) +
+  scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green")) +
+  theme_minimal() +
+  labs(title = "2005")
+
+p4 <- ggplot() +
+  geom_sf(data = bcn1997.d$geometry, aes(fill = factor(bcn1997.d$cluster))) +
+  scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green")) +
+  theme_minimal() +
+  labs(title = "1997")
+```
+
+```{r fig.height=15, fig.width=15}
+grid.arrange(p4, p3, p2, p1)
+```
+
+## Dades barri
+
+```{r}
+m.df.barri <- m.df %>%
+  subset(tipus_de_territori == "barri")  %>%
+  select(-c("tipus_de_territori"))
+```
+
+```{r}
+m.df.barri2 <- m.df.barri %>% 
+  mutate(id = str_c(territori, anys, sep = "_")) %>%
+  mutate_all(function(x) {
+    if(is.numeric(x)) {
+      x[is.na(x)] <- mean(x, na.rm = TRUE)
+    }
+    return(x)
+  }) %>%
+  mutate(across(where(is.numeric), scale))
+```
+
+```{r}
+m.df.b2 <- m.df.barri %>%
+  mutate(id = str_c(territori, anys, sep = "_")) %>%
+  mutate_all(function(x) {
+    if(is.numeric(x)) {
+      x[is.na(x)] <- mean(x, na.rm = TRUE)
+    }
+    return(x)
+  }) %>%
+  mutate(across(where(is.numeric), scale_01))
+```
+
+```{r}
+mDF_b <- m.df.barri2 %>%
+  select(!c("territori", "anys")) %>%
+  column_to_rownames("id")  %>%
+  as.matrix()
+```
+
+```{r}
+mDF_b2 <- m.df.b2 %>%
+  select(!c("territori", "anys")) %>%
+  column_to_rownames("id")  %>%
+  as.matrix()
+```
+
+```{r}
+fviz_nbclust(mDF_b, kmeans, method = "wss")
+```
+
+```{r}
+km_res.b <- kmeans(mDF_b, centers = 3, nstart = 25)
+fviz_cluster(km_res.b, data = mDF_b, repel = TRUE,
+             geom = "point", ellipse.type = 'none', ggtheme = theme_minimal())
+```
+
+```{r}
+km_res.b2 <- kmeans(mDF_b2, centers = 3, nstart = 25)
+```
+
+```{r}
+dis.b <- data.frame(mDF_b, cluster=km_res.b$cluster, territori=rownames(mDF_b))
+dis.b[,c("cluster", "territori")]
+```
+
+```{r}
+tail(dis.b[,c("cluster", "territori")], 971)
+```
+
+```{r}
+centroids.b <- as.data.frame(km_res.b$centers)
+range_of_centroids.b <- apply(centroids, 2, function(x) max(x) - min(x))
+
+importance_of_variables.b <- sort(range_of_centroids.b, decreasing = TRUE)
+
+print(importance_of_variables.b)
+```
+
+```{r}
+pca_result.b <- prcomp(mDF_b)
+fviz_eig(pca_result.b, addlabels = TRUE)
+```
+
+```{r}
+umap_result.b <- umap(mDF_b)
+
+umap_plot.b <- data.frame(umap_result.b$layout)
+colnames(umap_plot.b) <- c("UMAP1", "UMAP2")
+
+labels.b <-  as.factor(km_res.b$cluster)
+
+umap_plot.b$labels.b <-  labels.b
+
+umap.b <- ggplot(umap_plot.b, aes(x = UMAP1, y = UMAP2, color = labels.b)) +
+    geom_point(alpha = 0.6) +
+    labs(title = "UMAP Projection", x = "UMAP1", y = "UMAP2") +
+    theme_minimal()
+
+ggplotly(umap.b)
+```
+
+### Grafiques
+
+```{r}
+barri <- data.frame(m.df.barri[, c("territori", "anys")], cluster = km_res.b$cluster)
+
+mapbcn <-  left_join(x = barri, y = bcn_barri, by = c("territori"))
+
+bcn2023 <- subset(mapbcn, mapbcn$anys == 2023)
+
+bcn2014 <- subset(mapbcn, mapbcn$anys == 2014)
+
+bcn2005 <- subset(mapbcn, mapbcn$anys == 2005)
+
+bcn1997 <- subset(mapbcn, mapbcn$anys == 1997)
+```
+
+```{r}
+p1.b <- ggplot() +
+  geom_sf(data = bcn2023$geometry, aes(fill = factor(bcn2023$cluster))) +
+  scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green")) +
+  theme_minimal() +
+  labs(title = "2023")
+
+p2.b <- ggplot() +
+  geom_sf(data = bcn2014$geometry, aes(fill = factor(bcn2014$cluster))) +
+  scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green")) +
+  theme_minimal() +
+  labs(title = "2014")
+
+p3.b <- ggplot() +
+  geom_sf(data = bcn2005$geometry, aes(fill = factor(bcn2005$cluster))) +
+  scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green")) +
+  theme_minimal() +
+  labs(title = "2005")
+
+p4.b <- ggplot() +
+  geom_sf(data = bcn1997$geometry, aes(fill = factor(bcn1997$cluster))) +
+  scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green")) +
+  theme_minimal() +
+  labs(title = "1997")
+```
+
+```{r fig.height=14, fig.width=14}
+grid.arrange(p4.b, p3.b, p2.b, p1.b)
+```
+
+```{r}
+scale.01 <- function(x) {
+  x_min <- min(x, na.rm = TRUE)
+  x_max <- max(x, na.rm = TRUE)
+  return((x - x_min) / (x_max - x_min))
+}
+```
+
+```{r}
+unique.barris <- unique(m.df.barri$territori)
+
+plot_list <- list()
+
+for(i in seq_along(unique.barris)) {
+  zone_data <- subset(m.df.barri, territori == unique.barris[i]) %>%
+  mutate(across(!c("territori", "anys"), scale.01)) %>%
+  pivot_longer(cols = -c("territori", "anys"), names_to = "variable", values_to = "valor")
+  
+  z <- ggplot(zone_data, aes(x = anys, y = valor, color = variable)) +
+    geom_point() +
+    geom_line() +
+    scale_color_manual(values = color_variable) +
+    theme(legend.position = "bottom") +
+    ggtitle(paste("Plot for Zone:", unique.barris[i]))
+  
+  p_plotly <- ggplotly(z)
+  
+  plot_list[[i]] <- p_plotly
+}
+
+for(i in seq_along(plot_list)) {
+  print(plot_list[[i]])
+}
+```
+
+```{r}
+# for(i in seq_along(plot_list)) {
+#   saveWidget(plot_list[[i]], file = paste0(unique_zones[i], ".html"))
+# }
+```
+
+## Shiny APP
+
+```{r}
+global_min_preu_mitja_lloguer <- min(llmap$preu_mitja_lloguer, na.rm = TRUE)
+global_max_preu_mitja_lloguer <- max(llmap$preu_mitja_lloguer, na.rm = TRUE)
+
+global_min_edat_mitjana <- min(emap %>% select(-geometry, -territori, -anys, -NOM), na.rm = TRUE)
+global_max_edat_mitjana <- max(emap %>% select(-geometry, -territori, -anys, -NOM), na.rm = TRUE)
+
+global_min_habitatges_us_turistic <- min(hutmap$habitatges_us_turistic, na.rm = TRUE)
+global_max_habitatges_us_turistic <- max(hutmap$habitatges_us_turistic, na.rm = TRUE)
+
+ui <- fluidPage(
+  titlePanel("Evolució BCN"),
+  sidebarLayout(
+    sidebarPanel(
+      tabsetPanel(
+        id = "tabset",
+        tabPanel("Preu mitjà lloguer", 
+                 sliderInput("year1", "Year:", min = 2014, max = 2023, value = 2014, step = 1)),
+        tabPanel("Edat mitjana", 
+                 sliderInput("year2", "Year:", min = 1997, max = 2023, value = 1997, step = 1),
+                 selectInput("column_selector2", "Select Column:", 
+                             choices = colnames(select(emap, -c('territori', 'anys', 'NOM', 'geometry'))))),
+        tabPanel("Població",
+                 sliderInput("year3", "Year:", min = 1997, max = 2023, value = 1997, step = 1),
+                 selectInput("column_selector3", "Select Column:", 
+                             choices = colnames(select(pobmap.b, -c('territori', 'anys', 'NOM', 'geometry')))),
+                 textOutput("panel3Text")),
+        tabPanel("Estudis població",
+                 sliderInput("year4", "Year:", min = 1997, max = 2023, value = 1997, step = 1),
+                 selectInput("column_selector4", "Select Column:", 
+                             choices = colnames(select(epnmap.b, -c('territori', 'anys', 'NOM', 'geometry')))),
+                 textOutput("panel4Text")),
+        tabPanel("Habitatges ús turístic",
+                 sliderInput("year5", "Year:", min = 2014, max = 2023, value = 2014, step = 1),
+                 textOutput("panel5Text")),
+        tabPanel("Gentrificació Barris",
+                 sliderInput("year6", "Year:", min = 1997, max = 2023, value = 1997, step = 1),
+                 textOutput("panel6Text")),
+        tabPanel("Gentrificació Districtes",
+                 sliderInput("year7", "Year:", min = 1997, max = 2023, value = 1997, step = 1),
+                 textOutput("panel7Text"))
+      )
+    ),
+    mainPanel(
+      conditionalPanel(
+        condition = "input.tabset == 'Preu mitjà lloguer'",
+        plotlyOutput("mapPlot1", width = "100%", height = "800px")
+      ),
+      conditionalPanel(
+        condition = "input.tabset == 'Edat mitjana'",
+        plotlyOutput("mapPlot2", width = "100%", height = "800px")
+      ),
+      conditionalPanel(
+        condition = "input.tabset == 'Població'",
+        plotlyOutput("mapPlot3", width = "100%", height = "800px")
+      ),
+      conditionalPanel(
+        condition = "input.tabset == 'Estudis població'",
+        plotlyOutput("mapPlot4", width = "100%", height = "800px")
+      ),
+      conditionalPanel(
+        condition = "input.tabset == 'Habitatges ús turístic'",
+        plotlyOutput("mapPlot5", width = "100%", height = "800px")
+      ),
+      conditionalPanel(
+        condition = "input.tabset == 'Gentrificació Barris'",
+        plotlyOutput("mapPlot6", width = "100%", height = "800px")
+      ),
+      conditionalPanel(
+        condition = "input.tabset == 'Gentrificació Districtes'",
+        plotlyOutput("mapPlot7", width = "100%", height = "800px")
+      )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  output$mapPlot1 <- renderPlotly({
+    llly <- llmap[llmap$anys == input$year1, ]
+    
+    l <- ggplot(data = llly$geometry, aes(fill = llly$preu_mitja_lloguer)) +
+      geom_sf() +
+      scale_fill_gradient(low = "green", high = "red", name = "Preu Mitjà Lloguer", 
+                          limits = c(global_min_preu_mitja_lloguer, global_max_preu_mitja_lloguer)) +
+      theme_minimal() +
+      theme(
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank()
+      ) +
+      ggtitle("Preu Mitjà Lloguer")
+    
+    ggplotly(l)
+  })
+  
+  output$mapPlot2 <- renderPlotly({
+    emnly <- emap[emap$anys == input$year2, ]
+    
+    e <- ggplot(data = emnly$geometry, aes(fill = emnly[[input$column_selector2]], text = paste("Territori: ", emnly[["territori"]],"<br>Valor: ", sprintf("%.2f", emnly[[input$column_selector2]])))) +
+      geom_sf() +
+      scale_fill_gradient(low = "#6ff237", high = "#ba37f2", name = input$column_selector2, 
+                          limits = c(global_min_edat_mitjana, global_max_edat_mitjana)) +
+      theme_minimal() +
+      theme(
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank()
+      ) +
+      ggtitle("Edat Mitjana")
+    
+    ggplotly(e, tooltip = "text")
+  })
+  
+  output$mapPlot3 <- renderPlotly({
+    pobly <- pobmap.b[pobmap.b$anys == input$year3, ]
+    
+    max_poblacio_dynamic <- max(pobmap.b[[input$column_selector3]], na.rm = TRUE)
+    min_poblacio_dynamic <- min(pobmap.b[[input$column_selector3]], na.rm = TRUE)
+    
+    pb <- ggplot(data = pobly$geometry, aes(fill = pobly[[input$column_selector3]])) +
+      geom_sf() +
+      scale_fill_gradient(low = "#6ff237", high = "#ba37f2", name = input$column_selector3, 
+                          limits = c(min_poblacio_dynamic, max_poblacio_dynamic)) +
+      theme_minimal() +
+      theme(
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank()
+      ) +
+      ggtitle("Població")
+    
+    ggplotly(pb)
+  })
+  
+  output$mapPlot4 <- renderPlotly({
+    eply <- epnmap.b[epnmap.b$anys == input$year4, ]
+    
+    max_estudis_poblacio_dynamic <- max(epnmap.b[[input$column_selector4]], na.rm = TRUE)
+    min_estudis_poblacio_dynamic <- min(epnmap.b[[input$column_selector4]], na.rm = TRUE)
+    
+    ep <- ggplot(data = eply$geometry, aes(fill = eply[[input$column_selector4]])) +
+      geom_sf() +
+      scale_fill_gradient(low = "#6ff237", high = "#ba37f2", name = input$column_selector4, 
+                          limits = c(min_estudis_poblacio_dynamic, max_estudis_poblacio_dynamic)) +
+      theme_minimal() +
+      theme(
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank()
+      ) +
+      ggtitle("Estudis Població")
+    
+    ggplotly(ep)
+  })
+  
+  output$mapPlot5 <- renderPlotly({
+    hutly <- hutmap[hutmap$anys == input$year5, ]
+
+    h <- ggplot(data = hutly$geometry, aes(fill = hutly$habitatges_us_turistic)) +
+      geom_sf() +
+      scale_fill_gradient(low = "green", high = "red", name = "Habitatges Ús Turístic", 
+                          limits = c(global_min_habitatges_us_turistic, global_max_habitatges_us_turistic)) +
+      theme_minimal() +
+      theme(
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank()
+      ) +
+      ggtitle("Habitatges Ús Turístic")
+
+    ggplotly(h)
+  })
+  
+  output$mapPlot6 <- renderPlotly({
+    cb <- mapbcn[mapbcn$anys == input$year6, ]
+    
+    b <- ggplot() +
+      geom_sf(data = cb$geometry, aes(fill = factor(cb$cluster))) +
+      scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green"), name = "Gentrificació Barris") +
+      theme_minimal() +
+      theme(
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank()
+      ) +
+      ggtitle("Gentrificació Barris")
+    
+    ggplotly(b)
+  })
+  
+  output$mapPlot7 <- renderPlotly({
+    cd <- mapbcn.d[mapbcn.d$anys == input$year7, ]
+    
+    d <- ggplot() +
+      geom_sf(data = cd$geometry, aes(fill = factor(cd$cluster))) +
+      scale_fill_manual(values = c("1" = "red", "2" = "yellow", "3" = "green"), name = "Gentrificació Districtes") +
+      theme_minimal() +
+      theme(
+        axis.line = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank()
+      ) +
+      ggtitle("Gentrificació Districtes")
+    
+    ggplotly(d)
+  })
+}
+
+shinyApp(ui = ui, server = server)
+```
+
+# PCA
+
+```{r}
+b.cl <- data.frame(m.df.barri[,], cluster = km_res.b2$cluster) %>%
+  mutate(across(!c("territori", "anys", "cluster"), scale))
+
+b.cl_s <- b.cl[, !(names(b.cl) %in% c("territori", "anys"))]
+```
+
+```{r}
+b.cl_predictors <- b.cl_s[, !(names(b.cl_s) == "cluster")] %>%
+  mutate_all(function(x) {
+    if(is.numeric(x)) {
+      x[is.na(x)] <- mean(x, na.rm = TRUE)
+    }
+    return(x)
+  })
+
+b.pca <- prcomp(b.cl_predictors, scale. = TRUE)
+
+summary(b.pca)
+```
+
+```{r}
+b.pca
+```
+
+```{r}
+pca.df <- data.frame(b.pca$rotation[,c(1:3)]) %>%
+  rownames_to_column(var = "variables")
+```
+
+```{r}
+pca.df2 <- pca.df %>%
+  pivot_longer(cols = -c(variables),
+               names_to = "PCs",
+               values_to = "valor")
+```
+
+```{r}
+pca.plot <- ggplot(pca.df2, aes(x = PCs, y = valor, group = variables, colour = variables)) + 
+  geom_point() + geom_line() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+ggplotly(pca.plot)
+```
+
+# PERMANOVA
+```{r}
+result <- adonis2(mDF_b2 ~ km_res.b2$cluster, method = "euclidean", permutations = 999)
+result_pw <- pairwise.adonis(mDF_b2, km_res.b2$cluster, perm = 999)
+```
+
+```{r}
+result
+```
+
+```{r}
+result_pw
+```
+
+# Correlacio
+```{r}
+c.df <- cor(m.df.b2[, !names(m.df.b2) %in% c("territori", "anys", "id")])
+```
+
+```{r}
+heatmap.2(c.df,
+          trace = "none",
+          margins = c(12,12),
+          col = colorRampPalette(c("blue", "white", "red"))(25),
+          cellnote = round(c.df, 2),  # Add correlation values to the cells
+          notecol="black",  # Change the color of the text to black
+          density.info="none",  # Turn off density plot inside heatmap
+          dendrogram="row",  # Only draw a row dendrogram
+          notecex=1,
+          cexRow = 0.7,
+          cexCol = 0.7)  # Font size of cell labels
+```
+
+# Arbre decisio
+
+```{r}
+m.df.b3 <- m.df.barri %>% 
+  mutate(id = str_c(territori, anys, sep = "_")) %>%
+  mutate_all(function(x) {
+    if(is.numeric(x)) {
+      x[is.na(x)] <- mean(x, na.rm = TRUE)
+    }
+    return(x)
+  })
+
+b3 <- data.frame(m.df.b3, cluster = km_res.b$cluster)
+b3 <-  b3[, !names(b3) %in% c("territori", "anys", "id")]
+b3$cluster <- factor(b3$cluster, levels = c(1, 2, 3), labels = c("gentrificat", "en proces", "no gentrificat"))
+```
+
+```{r}
+trainIndex <- createDataPartition(b3$cluster, p = .8, 
+                                  list = FALSE, 
+                                  times = 1)
+df_train <- b3[ trainIndex,]
+df_test  <- b3[-trainIndex,]
+```
+
+```{r}
+trainIndex <- createDataPartition(b3$cluster, p = 0.8, list = FALSE, times = 1)
+
+b3_train <- b3[trainIndex, ]
+b3_test <- b3[-trainIndex, ]
+
+tree_model <- rpart(cluster ~ ., data = b3_train, method = "class")
+
+rpart.plot(tree_model, type = 4, extra = 1, cex = 0.7, faclen = 0, fallen.leaves = TRUE,tweak = 1.2, xcompact = TRUE, ycompact = TRUE, under = TRUE)
+
+b3.pred <- predict(tree_model, b3_test, type = "class")
+
+b3.pred <- factor(b3.pred, levels = levels(b3_test$cluster))
+
+b3_test$cluster <- factor(b3_test$cluster, levels = levels(b3_train$cluster))
+
+conf_matrix <- confusionMatrix(b3.pred, b3_test$cluster)
+print(conf_matrix)
+
+accuracy <- conf_matrix$overall['Accuracy']
+print(paste("Accuracy:", accuracy))
+```
