@@ -22,6 +22,6 @@ Es pot accedir a la web de l'aplicació shiny desenvolupada en el següent enlla
 ![shinyapp](https://github.com/Gamaor4/gentrification_bcn.TFM/assets/150432861/74cc2b36-b85f-4fef-9701-cd5a99402950)
 *Imatge de l'evolució del procés gentrificador a Barcelona*
 
-També es pot accedir a l'aplicació shiny per visualitzar les dades utilitzades de forma interactiva.
+També es pot accedir a l'aplicació shiny per visualitzar les dades utilitzades de forma interactiva en el següent enllaç: https://omartinezgarciauoc.shinyapps.io/Interactive_graphs_bcn/
 ![imatge](https://github.com/Gamaor4/gentrification_bcn.TFM/assets/150432861/7d300ced-a8e1-4b7d-aa7d-e3653159bb23)
 *Imatge de les variables estudiades.*
